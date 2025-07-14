@@ -11,5 +11,7 @@ A modularização do código continuou sendo mantida com funções realizando um
 
 Foi utilizado as boas práticas no uso das classes e funções, alem disso, implementei a ferramenta de formatação isort, para garantir a formatação recomendado pela PEP8.
 
-
+Na versao 3.1 foi integrado a base de dados para cadastrar clientes e contas.
+Usando SQLite3 a base de dados padrao do python
+As operacoes de manipulacao e consulta foi feita com Python DBAPI
 ***
