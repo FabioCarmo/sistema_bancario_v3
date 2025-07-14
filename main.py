@@ -6,7 +6,7 @@
 # Integrado com a base de dados usando o python DB API (Db atual SQLite3)
 # Desafio DIO Back-End Python santander 2025
 # Autor: Fábio Gonçalves
-# Data: 22-06-2025 Versão: 4.0
+# Data: 22-06-2025 Versão: 3.1
 
 from time import sleep
 
