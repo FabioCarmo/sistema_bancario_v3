@@ -6,36 +6,43 @@ from managedb.manage_dbapi import DbBanco
 
 db = DbBanco()
 
-def menu():
-    menu = """\n
-    ================ MENU ================
-    [1]\tDepositar
-    [2]\tSacar
-    [3]\tExtrato
-    [4]\tNova conta
-    [5]\tNovo usuario
-    [6]\tListar contas
-    [0]\tSair
-    => """
+def menu(clientes):
+
+    if not clientes:
+
+        menu = """\n
+            ================ MENU ================
+        [4]\tNova conta
+        [6]\tLogin
+        [0]\tSair
+        => """
+    else:
+        menu = """\n
+            ================ MENU ================
+        [1]\tDepositar
+        [2]\tSacar
+        [3]\tExtrato
+        [5]\tNovo usuario
+        [6]\tLogin
+        [7]\tExcluir meus dados
+        [0]\tSair
+        => """
 
     return input(textwrap.dedent(menu)).strip()
 
 
-def filtrar_cliente(cpf, clientes):
+def filtrar_cliente(cpf):
     #clientes_filtrados = [cliente for cliente in clientes if cliente.cpf == cpf]
     #return clientes_filtrados[0] if clientes_filtrados else None
-    cpf = (cpf, )
+    cpf = (cpf,)
     clientes_filtrados = db.listarClientes(indice=cpf)
     return clientes_filtrados if clientes_filtrados else None
 
 
-def recuperar_conta_cliente(cliente):
-    if not cliente.contas:
-        print("\n@@@ Cliente não possui conta! @@@")
-        return
-
-    # FIXME: não permite cliente escolher a conta
-    return cliente.contas[0]
+def recuperar_conta_cliente(cpf):
+    cpf = (cpf,)
+    contas_filtradas = db.listarContas(indice=cpf)
+    return contas_filtradas if contas_filtradas else None
 
 
 def depositar(clientes):
@@ -74,15 +81,12 @@ def sacar(clientes):
     cliente.realizar_transacao(conta, transacao)
 
 
-def exibir_extrato(clientes):
-    cpf = float(input("Informe o CPF do cliente: "))
-    cliente = filtrar_cliente(cpf, clientes)
+def exibir_extrato(cliente, conta):
 
     if not cliente:
         print("\n@@@ Cliente não encontrado! @@@")
         return
 
-    conta = recuperar_conta_cliente(cliente)
     if not conta:
         return
 
@@ -103,7 +107,7 @@ def exibir_extrato(clientes):
 
 def criar_cliente(clientes):
     cpf = input("Informe o CPF (somente número): ").strip()
-    cliente = filtrar_cliente(cpf, clientes)
+    cliente = filtrar_cliente(cpf)
 
     if cliente:
         print("\n@@@ Já existe cliente com esse CPF! @@@")
@@ -139,19 +143,59 @@ def criar_conta(numero_conta, clientes, contas):
 
     agencia = Conta.agencia() # Obter o numero da agencia
     dados = (cliente[0], cpf, agencia, numero_conta) # Cliente[0] armazena o id do cliente
-    resultado_db = db.inserirConta(dados) # Metodo do db para inserir resgistros
+    resultado_db = db.inserirConta(dados) # Metodo do db para inserir registros
 
     if resultado_db == False:
         print("Erro ao cadastrar conta !")
         return
 
     contas.append(conta)
-    clientes.contas.append(conta)
+    cliente.contas.append(conta)
 
     print("\n=== Conta criada com sucesso! ===")
 
 
-def listar_contas(contas):
-    for conta in contas:
-        print("=" * 100)
-        print(textwrap.dedent(str(conta)))
+def login(clientes, contas):
+    cpf = float(input("Digite seu cpf: ").strip())
+    cliente = filtrar_cliente(cpf)
+
+    if not cliente:
+        print("\n@@@ Cliente não possui conta! @@@")
+        return
+    
+    conta = recuperar_conta_cliente(cpf)
+    contas.append(conta)
+    clientes.append(cliente)
+
+    print(f"Bem-vindo de volta, {cliente[1]}.")
+
+
+def excluir_registro(clientes):
+
+    if not clientes:
+        print("Cliente não encontrado !")
+        return 
+    
+    tabelas = ("clientes", "contas", "saldo", "transacao")
+    dados = (tabelas, clientes[0]) # clientes[0] ID do usuario
+
+    while True:
+        opcao = input("Deseja excluir todos os seus dados ? S ou N (S para sim N para nao)").strip()
+
+        if opcao == "S":
+            dados = ("clientes", "contas", clientes[0])
+            db.excluirRegistro(dados)
+            if excluir_registro == False:
+                print("Erro ao excluir dados !")
+                return
+            else:
+                print("Seus dados foram excluidos com sucesso!")
+                return 
+            
+        elif opcao == "N":
+            return
+
+        else:
+            print("Opção invalida ")
+            continue
+        

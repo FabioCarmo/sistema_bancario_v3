@@ -12,7 +12,7 @@ from time import sleep
 
 # importar modulos do projeto
 from src.options import menu, depositar, sacar, exibir_extrato,  filtrar_cliente, criar_cliente, criar_conta, \
-listar_contas, recuperar_conta_cliente
+login, recuperar_conta_cliente, excluir_registro
 
 # Funcao principal do sistema
 def main():
@@ -20,7 +20,7 @@ def main():
     contas = []
 
     while True:
-        opcao = menu()
+        opcao = menu(clientes)
 
         if opcao == "1":
             depositar(clientes)
@@ -43,8 +43,12 @@ def main():
             sleep(1)
 
         elif opcao == "6":
-            listar_contas(contas)
+            login(clientes, contas)
             sleep(1)
+        
+        elif opcao == "7":
+            excluir_registro(clientes)
+            sleep(3)
 
         elif opcao == "0":
             print("Encerrando..")
