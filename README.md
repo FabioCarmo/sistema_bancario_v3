@@ -1,5 +1,5 @@
-***
-Esse é um simulador de sistema bancario
+#simulador de sistema bancario versao: 3.1
+
 como parte do projeto do Bootcamp: DIO - Santander 2025 de Python
 Nessa versão do sistema o usuario pode criar uma conta e fazer login
 e realizar operacoes de deposito, saque e extrato
